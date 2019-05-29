@@ -1,0 +1,83 @@
+#-*-coding:utf-8-*-
+"""
+python 和其他语言最大的一个特点是：
+pytohn是dynamically typed 可以接受任何数据类型（整型、浮点、字符串等等）
+python不考虑输入的数据类型，而是将其交给具体代码来判断执行。同一个函数可以应用在整型、列表、字符串等等操作中。
+这种行为成为多态。
+
+python支持函数嵌套，即函数里面又有函数
+函数嵌套：
+1、能够保证内部函数的隐私
+2、内部函数只能被外部函数所调用和访问，不会暴露在全局作用域中。安全性有很大提高。 如下面例子：f1()是外部函数，f2()是内部函数。
+对于函数嵌套，内部函数可以访问外部函数的变量，但不能修改，如要修改，需要加上nonlocal关键字
+
+函数变量作用域
+函数内部定义的就是局部变量，只在函数内部有效，一旦执行完毕，局部变量回收，无法访问。
+全局变量可以在文件内任何地方被访问。但是不能在函数内部随意改变全局变量的值。如要改变时则需要添加关键字global关键字
+
+#闭包：
+和嵌套函数类似，不同的是，返回的是一个函数，而不是一个具体的值。返回函数通常赋予一个变量。但这个变量可以在后面继续执行调用。
+
+"""
+
+#函数嵌套
+def f1():
+    print('hello')
+    def f2():
+        print("world")
+    f2()
+f1()
+
+#递归函数嵌套.使用函数嵌套，检查输入是否合法，这样一来就只需要检查一次。
+# 如果不用嵌套，每次调用就检查一次，会降低程序的运行效率。
+def factorial(input):
+    if not isinstance(input,int):
+        raise Exception('input must be an integer')
+    if input<0:
+        raise Exception('input must be greater or equal to 0')
+
+    def inner_factorial(input):
+        if input<=1:
+            return 1
+        return input * inner_factorial(input - 1)
+    return inner_factorial(input)
+
+print(factorial(5))
+
+min_value = 1
+max_value = 10
+list0 = []
+def validation_check(value):
+    global min_value
+    min_value += 1
+    list0.append(1)
+    print(min_value)
+
+validation_check(5)
+print(len(list0))
+
+#嵌套函数访问外部函数
+def outer():
+    x = 'local'
+    def inner():
+        nonlocal x
+        x = 'nonlocal'
+        print('inner:',x)
+    inner()
+    print("outer:",x)
+outer()
+
+
+#闭包
+def nth_power(exponent):
+    def exponet_of(base):
+        return base**exponent
+    return exponet_of
+
+square = nth_power(2)   #2的2次方
+cube = nth_power(3)     #2的3次方
+
+print(square(2))
+print(square(4))
+print(cube(2))
+#在执行完square = nth_power(2)、cube = nth_power(3)之后，nth_power()中的参数exponent依然能够被内部函数exponet_of记住。
